@@ -9,6 +9,8 @@
 #ifndef APPLICATION_JX8NA5Y9
 #define APPLICATION_JX8NA5Y9
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <string>
 
 class GLFWwindow;
