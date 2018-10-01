@@ -5,7 +5,6 @@
  * Licence:
  *      * MIT
  */
-
 #include "Application3D.hpp"
 
 int main(int argc, const char *argv[])

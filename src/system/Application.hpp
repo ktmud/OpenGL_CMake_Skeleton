@@ -13,7 +13,7 @@
 
 #include <string>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 /// \class Application
 /// Base class : 
