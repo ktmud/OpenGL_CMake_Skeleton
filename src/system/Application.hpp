@@ -49,6 +49,7 @@ class Application
         // Application informations
         int getWidth();
         int getHeight();
+
         float getWindowRatio();
         bool windowDimensionChange();
 
@@ -65,6 +66,7 @@ class Application
         Application& operator=(const Application&) {return *this;}
 
         GLFWwindow* window;
+
         float time;
         float deltaTime;
 

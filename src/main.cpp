@@ -1,15 +1,11 @@
 /**
- * Main.cpp skeleton
- * Contributors:
- *      * Arthur Sonzogni
- * Licence:
- *      * MIT
+ * main.cpp application entry point
  */
-#include "Application3D.hpp"
+#include "RSScanner.hpp"
 
 int main(int argc, const char *argv[])
 {
-    Application3D app;
+    RSScanner app;
     app.run();
     return 0;
 }
