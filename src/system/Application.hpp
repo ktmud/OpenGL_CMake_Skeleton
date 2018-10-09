@@ -13,6 +13,7 @@
 
 #include <string>
 
+struct ImGuiIO;
 struct GLFWwindow;
 
 /// \class Application
@@ -66,9 +67,6 @@ class Application
         Application& operator=(const Application&) {return *this;}
 
         GLFWwindow* window;
-
-        float time;
-        float deltaTime;
 
         int width;
         int height;

@@ -142,7 +142,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, 0);
 
         //  draw_text((int)r.x + 15, (int)r.y + 20, rs2_stream_to_string(stream));
-        ImGui::Text(rs2_stream_to_string(stream), (int)r.x + 15, (int)r.y + 20);
+        // ImGui::Text(rs2_stream_to_string(stream), (int)r.x + 15, (int)r.y + 20);
     }
 
 private:
@@ -228,7 +228,7 @@ struct pcview_state {
 
 
 // Handles all the OpenGL calls needed to display the point cloud
-extern void draw_pointcloud(int width, int height, pcview_state& pc_state, rs2::points& points);
+extern void draw_pointcloud(float width, float height, pcview_state& pc_state, rs2::points& points);
 
 // Update state for point cloud view
 extern void update_pc_state(pcview_state& pc_state);

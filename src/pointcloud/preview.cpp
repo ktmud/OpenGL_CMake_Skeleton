@@ -9,18 +9,12 @@
 
 #include "preview.hpp"
 
-//////////////////////////////
-// Basic Data Types         //
-//////////////////////////////
 
 // Handles all the OpenGL calls needed to display the point cloud
-extern void draw_pointcloud(int width, int height, pcview_state& pc_state, rs2::points& points)
+extern void draw_pointcloud(float width, float height, pcview_state& pc_state, rs2::points& points)
 {
     if (!points)
         return;
-
-    float _width = (float ) width;
-    float _height = (float ) height;
 
     // OpenGL commands that prep screen for the pointcloud
     glPopMatrix();
@@ -31,7 +25,7 @@ extern void draw_pointcloud(int width, int height, pcview_state& pc_state, rs2::
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glm::perspective(glm::radians(60.f), _width/_height, 0.1f, 100.0f);
+    glm::perspective(glm::radians(60.f), width/height, 0.1f, 100.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -42,7 +36,7 @@ extern void draw_pointcloud(int width, int height, pcview_state& pc_state, rs2::
     glRotated(pc_state.yaw, 0, 1, 0);
     glTranslatef(0, 0, -0.5f);
 
-    glPointSize(_width / 640);
+    glPointSize(width / 640);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, pc_state.tex.get_gl_handle());
@@ -79,7 +73,8 @@ extern void draw_pointcloud(int width, int height, pcview_state& pc_state, rs2::
 extern void update_pc_state(pcview_state& pc_state)
 {
     ImGuiIO& io = ImGui::GetIO();
-    pc_state.ml = ImGui::IsMouseDown(0); // is left mouse down?
+    // is left mouse down and is inside window?
+    pc_state.ml = ImGui::IsMouseDown(0) && ImGui::IsItemHoveredRect();
     pc_state.offset_x = -io.MouseWheelH;
     pc_state.offset_y = -io.MouseWheel;
 

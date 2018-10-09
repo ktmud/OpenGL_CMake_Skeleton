@@ -65,6 +65,8 @@ Application::Application():
         throw std::runtime_error("Couldn't create a window");
     }
 
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
     // Initialize OpenGL loader
     bool err = glewInit() != GLEW_OK;
     if (err)
@@ -78,10 +80,9 @@ Application::Application():
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
-
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
     // second argument indicate whether to install callbacks
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -105,7 +106,6 @@ Application::Application():
     // io.Fonts->AddFontFromFileTTF("assets/fonts/ProggyTiny.ttf", 10.0f);
     // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
     // IM_ASSERT(font != NULL);
-
 }
 
 GLFWwindow* Application::getWindow() const
@@ -118,16 +118,6 @@ void Application::exit() {
 }
 
 
-float Application::getFrameDeltaTime() const
-{
-    return deltaTime;
-}
-
-float Application::getTime() const
-{
-    return time;
-}
-
 void Application::run()
 {
     state = stateRun;
@@ -135,17 +125,15 @@ void Application::run()
     //Make the window's context current
     glfwMakeContextCurrent(window);
 
-    time = (float) glfwGetTime();
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
     while (!glfwWindowShouldClose(window) && state == stateRun)
     {
 
-        // compute new time and delta time
-        float t = (float) glfwGetTime();
-        deltaTime = t - time;
-        time = t;
-        
+        // detech window related changes
+        detectWindowDimensionChange();
+
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
@@ -163,13 +151,19 @@ void Application::run()
 
         // Rendering
         ImGui::Render();
-        int display_w, display_h;
-        glfwMakeContextCurrent(window);
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, getWidth(), getHeight());
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        // glfwMakeContextCurrent(window);
+        // Update and Render additional Platform Windows
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+        }
+
+        glfwMakeContextCurrent(window);
         glfwSwapBuffers(window);
     }
     
@@ -180,6 +174,19 @@ void Application::run()
 
     glfwDestroyWindow(window);
     glfwTerminate();
+}
+
+void Application::detectWindowDimensionChange()
+{
+    int w,h;
+    glfwGetWindowSize((GLFWwindow *) getWindow(), &w, &h);
+    dimensionChange = ( w!= width || h != height) ;
+    if (dimensionChange) 
+    {
+        width = w;
+        height = h;
+        // glViewport(0, 0, width, height);
+    }
 }
 
 void Application::loop()
